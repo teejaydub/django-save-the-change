@@ -4,8 +4,6 @@ from __future__ import division, absolute_import, print_function, unicode_litera
 
 from collections import defaultdict
 
-from django.utils import six
-
 from .util import DoesNotExist
 from .mappings import OldValues
 
@@ -117,8 +115,8 @@ def _save_the_change_save_hook(instance, *args, **kwargs):
 		instance._meta.pk.attname not in instance._changed_fields
 	):
 		kwargs['update_fields'] = (
-			[name for name, value in six.iteritems(instance._changed_fields)] +
-			[name for name, value in six.iteritems(instance._mutable_fields) if hasattr(instance, name) and getattr(instance, name) != value]
+			[name for name, value in instance._changed_fields.items()] +
+			[name for name, value in instance._mutable_fields.items() if hasattr(instance, name) and getattr(instance, name) != value]
 		)
 		
 		return (bool(kwargs['update_fields']), args, kwargs)
@@ -170,15 +168,15 @@ def TrackChanges(cls):
 	def has_changed(self):
 		return (
 			bool(self._changed_fields) or
-			any(getattr(self, name) != value for name, value in six.iteritems(self._mutable_fields))
+			any(getattr(self, name) != value for name, value in self._mutable_fields.items())
 		)
 	
 	cls.has_changed = property(has_changed)
 	
 	def changed_fields(self):
 		return (
-			set(name for name in six.iterkeys(self._changed_fields)) |
-			set(name for name, value in six.iteritems(self._mutable_fields) if getattr(self, name, DoesNotExist) != value)
+			set(name for name in self._changed_fields.keys()) |
+			set(name for name, value in self._mutable_fields.items() if getattr(self, name, DoesNotExist) != value)
 		)
 	
 	cls.changed_fields = property(changed_fields)
@@ -201,7 +199,7 @@ def TrackChanges(cls):
 		if names is None:
 			names = list(self._mutable_fields) + list(self._changed_fields)
 		
-		if isinstance(names, (six.text_type, six.binary_type) + six.string_types):
+		if isinstance(names, (str, bytes)):
 			names = [names]
 		
 		for name in names:

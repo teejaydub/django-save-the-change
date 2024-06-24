@@ -6,22 +6,17 @@ from datetime import date, time, datetime, timedelta, tzinfo
 from decimal import Decimal
 from uuid import UUID
 
-from django.utils import six
-
 
 #: A :class:`set` listing known immutable types.
 IMMUTABLE_TYPES = set((
 	type(None), bool, float, complex, Decimal,
-	six.text_type, six.binary_type, tuple, frozenset,
+	str, bytes, tuple, frozenset,
 	date, time, datetime, timedelta, tzinfo,
-	UUID
-) + six.integer_types + six.string_types)
+	UUID, int))
 
 #: A :class:`set` listing known immutable types that are infinitely
 #: recursively iterable.
-INFINITELY_ITERABLE_IMMUTABLE_TYPES = set(
-	(six.text_type, six.binary_type) + six.string_types
-)
+INFINITELY_ITERABLE_IMMUTABLE_TYPES = set((str, bytes))
 
 
 class DoesNotExist:
