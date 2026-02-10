@@ -50,9 +50,9 @@ class STCMixin(object):
 		self._mutable_fields = {}
 		self._mutability_checked = set()
 	
-	def refresh_from_db(self, using=None, fields=None):
-		super(STCMixin, self).refresh_from_db(using, fields)
-		
+	def refresh_from_db(self, using=None, fields=None, from_queryset=None):
+		super(STCMixin, self).refresh_from_db(using, fields, from_queryset)
+
 		if fields:
 			for field in fields:
 				self._changed_fields.pop(field, None)
